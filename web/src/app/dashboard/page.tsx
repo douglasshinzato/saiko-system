@@ -8,12 +8,22 @@ import { Package, AlertTriangle, BadgeAlert, Layers, ExternalLink, ArrowUpRight,
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
 
+interface ProductVariant {
+  id: string;
+  productId: string;
+  barcode: string;
+  sku: string | null;
+  description: string;
+  price: number;
+  cost: number | null;
+  quantity: number;
+}
+
 interface Product {
   id: string;
-  barcode: string;
   name: string;
-  price: number;
-  quantity: number;
+  description: string | null;
+  variants: ProductVariant[];
 }
 
 export default function DashboardPage() {
@@ -28,12 +38,13 @@ export default function DashboardPage() {
     },
   });
 
-  const totalProducts = products.length;
-  const totalStockItems = products.reduce((acc, p) => acc + p.quantity, 0);
+  const allVariants = products.flatMap((p) => p.variants);
+  const totalProducts = allVariants.length;
+  const totalStockItems = allVariants.reduce((acc, v) => acc + v.quantity, 0);
 
   // Alerta de estoque baixo (menor ou igual a 5 unidades)
-  const lowStockProducts = products.filter((p) => p.quantity <= 5);
-  const totalLowStock = lowStockProducts.length;
+  const lowStockVariants = allVariants.filter((v) => v.quantity <= 5);
+  const totalLowStock = lowStockVariants.length;
 
   return (
     <div className="space-y-8">
@@ -56,7 +67,7 @@ export default function DashboardPage() {
             ) : (
               <div className="text-3xl font-bold">{totalProducts}</div>
             )}
-            <p className="text-xs text-muted-foreground mt-1">Total de itens cadastrados no catálogo</p>
+            <p className="text-xs text-muted-foreground mt-1">Total de variações de itens no catálogo</p>
           </CardContent>
         </Card>
 
@@ -118,7 +129,7 @@ export default function DashboardPage() {
                 <div className="h-10 bg-zinc-100 dark:bg-zinc-800/50 animate-pulse rounded" />
                 <div className="h-10 bg-zinc-100 dark:bg-zinc-800/50 animate-pulse rounded" />
               </div>
-            ) : lowStockProducts.length === 0 ? (
+            ) : lowStockVariants.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
                 <Package className="h-10 w-10 mb-2 stroke-1 text-zinc-300" />
                 <p className="text-sm font-medium">Nenhum produto com estoque crítico.</p>
@@ -129,28 +140,35 @@ export default function DashboardPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-zinc-200 dark:border-zinc-800 text-muted-foreground text-left">
-                      <th className="py-2 font-medium">Produto</th>
+                      <th className="py-2 font-medium">Produto / Variação</th>
                       <th className="py-2 font-medium text-right">Preço</th>
                       <th className="py-2 font-medium text-right">Qtd</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {lowStockProducts.slice(0, 5).map((product) => (
-                      <tr key={product.id} className="border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/25">
-                        <td className="py-3 pr-2">
-                          <div className="font-semibold truncate max-w-[180px] md:max-w-[220px]" title={product.name}>
-                            {product.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground font-mono">{product.barcode}</div>
-                        </td>
-                        <td className="py-3 text-right">
-                          {product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                        </td>
-                        <td className="py-3 text-right font-bold text-amber-500">
-                          {product.quantity} un.
-                        </td>
-                      </tr>
-                    ))}
+                    {lowStockVariants.slice(0, 5).map((variant) => {
+                      const parentProduct = products.find((p) => p.id === variant.productId);
+                      const displayName = parentProduct
+                        ? `${parentProduct.name} (${variant.description})`
+                        : variant.description;
+
+                      return (
+                        <tr key={variant.id} className="border-b border-zinc-100 dark:border-zinc-800/50 hover:bg-zinc-50 dark:hover:bg-zinc-800/25">
+                          <td className="py-3 pr-2">
+                            <div className="font-semibold truncate max-w-[180px] md:max-w-[220px]" title={displayName}>
+                              {displayName}
+                            </div>
+                            <div className="text-xs text-muted-foreground font-mono">{variant.barcode}</div>
+                          </td>
+                          <td className="py-3 text-right">
+                            {variant.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                          </td>
+                          <td className="py-3 text-right font-bold text-amber-500">
+                            {variant.quantity} un.
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

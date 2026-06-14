@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import { serializerCompiler, validatorCompiler } from 'fastify-type-provider-zod';
 import { env } from './env.js';
+import { errorHandler } from './middlewares/error-handler.js';
 import { authRoutes } from './routes/auth.js';
 import { employeeRoutes } from './routes/employees.js';
 import { productRoutes } from './routes/products.js';
@@ -14,6 +15,9 @@ const app = Fastify({
 // Registrar compiladores do Zod
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+
+// Registrar tratamento de erro global
+app.setErrorHandler(errorHandler);
 
 // Registrar plugins
 app.register(cors, {

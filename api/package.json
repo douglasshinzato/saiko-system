@@ -2,11 +2,12 @@
   "name": "saiko-system-api",
   "version": "1.0.0",
   "description": "Backend API for Saiko System using Fastify, Prisma, and SQLite",
-  "main": "dist/server.js",
+  "main": "dist/server.mjs",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "build": "tsup",
+    "test": "vitest run",
+    "start": "node dist/server.mjs",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
@@ -32,7 +33,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.14.2",
     "prisma": "^5.15.0",
+    "tsup": "^8.5.1",
     "tsx": "^4.15.1",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^4.1.8"
   }
 }
