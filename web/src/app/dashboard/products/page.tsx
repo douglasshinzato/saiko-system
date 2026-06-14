@@ -550,7 +550,7 @@ export default function ProductsPage() {
 
       {/* Modal de Formulário (Cadastro / Edição) */}
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-lg border">
+        <DialogContent className="sm:max-w-xl w-full border">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
               {selectedProduct ? 'Editar Produto' : 'Cadastrar Novo Produto'}
@@ -617,7 +617,7 @@ export default function ProductsPage() {
                       Variação #{index + 1}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div className="space-y-1">
                         <Label className="text-xs" htmlFor={`barcode-${index}`}>Código de Barras *</Label>
                         <Input
@@ -642,7 +642,7 @@ export default function ProductsPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="space-y-1">
                         <Label className="text-xs" htmlFor={`price-${index}`}>Preço Venda (R$) *</Label>
                         <Input
@@ -709,7 +709,7 @@ export default function ProductsPage() {
 
       {/* Modal de Exclusão */}
       <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <DialogContent className="max-w-sm border">
+        <DialogContent className="sm:max-w-sm w-full border">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center gap-2 text-red-600">
               <AlertTriangle className="h-5 w-5" />
@@ -740,7 +740,7 @@ export default function ProductsPage() {
 
       {/* Modal de Resolução de Colisão do Scanner */}
       <Dialog open={isCollisionOpen} onOpenChange={setIsCollisionOpen}>
-        <DialogContent className="max-w-md border">
+        <DialogContent className="sm:max-w-md w-full border">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center gap-2 text-amber-500">
               <Barcode className="h-5 w-5" />
